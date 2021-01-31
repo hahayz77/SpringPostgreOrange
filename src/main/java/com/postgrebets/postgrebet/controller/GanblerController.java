@@ -19,14 +19,14 @@ public class GanblerController {
     }
 
     @GetMapping
-    public List<Ganbler> getGanblers(){
+    public List<Ganbler> getGanblers() {
         return ganblerService.findAll();
     }
 
     @PostMapping
-    public void newGanbler(@RequestBody Ganbler ganbler) {
-        ganblerService.newGanbler(ganbler);
+    public Ganbler newGanbler(@RequestBody Ganbler ganbler) {
+        return ganblerService.newGanbler(ganbler);
     }
 
-
 }
+

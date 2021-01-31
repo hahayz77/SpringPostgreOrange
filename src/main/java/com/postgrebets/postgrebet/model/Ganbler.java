@@ -1,23 +1,32 @@
 package com.postgrebets.postgrebet.model;
 
-import javax.persistence.*;
+import com.sun.istack.NotNull;
 
-@Entity
-@Table
+import javax.persistence.*;
+import java.util.List;
+
+@Entity(name = "ganblers")
 public class Ganbler {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @NotNull
     private String email;
-    private String name;
 
-    public Ganbler(){}
+    @OneToMany
+    private List<Bet> betList;
 
-    public Ganbler(String email, String name) {
-        this.id = id;
+    public Ganbler(String email, List<Bet> betList) {
         this.email = email;
-        this.name = name;
+        this.betList = betList;
+    }
+
+    public Ganbler() {   }
+
+    public Ganbler(String email) {
+        this.email = email;
     }
 
     public Long getId() {
@@ -36,11 +45,11 @@ public class Ganbler {
         this.email = email;
     }
 
-    public String getName() {
-        return name;
+    public List<Bet> getBetList() {
+        return betList;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setBetList(List<Bet> betList) {
+        this.betList = betList;
     }
 }
