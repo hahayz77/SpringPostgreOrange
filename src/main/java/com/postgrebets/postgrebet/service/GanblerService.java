@@ -7,11 +7,7 @@ import com.postgrebets.postgrebet.repository.GanblerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class GanblerService {
@@ -30,17 +26,28 @@ public class GanblerService {
         return ganblerRepository.findAll();
     }
 
-    public Ganbler newGanbler(Ganbler ganbler){
+    public Bet newGanbler(Ganbler ganbler){
 
         Optional<Ganbler> ganblerOptional = ganblerRepository
                 .findGanblerByEmail(ganbler.getEmail());
 
-        if(ganblerOptional.isPresent()){                        // TEM EMAIL
+        if(ganblerOptional.isPresent()){                         // TEM EMAIL
             //          throw new IllegalStateException("Email already in use!");
 
-            Ganbler ganblerDB = ganblerOptional.get();
-            Bet newBet = new Bet(new Date(), null);
-            betRepository.save(newBet);
+            Ganbler ganblerDB = ganblerOptional.get();          // PASSAR OPTIONAL PARA GANBLER
+
+            // GERAR NUMEROS
+            Random randomNumbers = new Random();
+            int[] randomResult = new int[3];
+
+            for (int i = 0; i <=2; i++){
+                int num = randomNumbers.nextInt(99);
+                randomResult[i] = num;
+            }
+
+
+            Bet newBet = new Bet(new Date(), randomResult[0], randomResult[1], randomResult[2]);   // NEW BET
+            betRepository.save(newBet);                         // SAVE BET
 
             if (ganblerDB.getBetList() == null){                // SE NÃO TEM APOSTA
                 ganblerDB.setBetList(new ArrayList<Bet>());     // LIST VAZIA CRIADA
@@ -48,13 +55,39 @@ public class GanblerService {
 
             List<Bet> ganblerBets = ganblerDB.getBetList();     // PEGAR LISTA DO BANCO
             ganblerBets.add(newBet);                            //ADICIONAR APOSTA (BET) NA LISTA
-            return ganblerRepository.save(ganblerDB);
+            ganblerRepository.save(ganblerDB);
+            return newBet;
 
         }
+        else{                                                   //NÃO TEM EMAIL
+            ganblerRepository.save(ganbler);
+            Optional<Ganbler> findGanblerDB = ganblerRepository.findGanblerByEmail(ganbler.getEmail());
+            Ganbler ganblerDB = findGanblerDB.get();
 
-        return ganblerRepository.save(ganbler);
+            // GERAR NUMEROS - 2
+            Random randomNumbers = new Random();
+            int[] randomResult = new int[3];
+
+            for (int i = 0; i <=2; i++){
+                int num = randomNumbers.nextInt(99);
+                randomResult[i] = num;
+            }
+
+            Bet newBet = new Bet(new Date(), randomResult[0], randomResult[1], randomResult[2]);
+            betRepository.save(newBet);
+
+            ganblerDB.setBetList(new ArrayList<Bet>());         // LIST VAZIA CRIADA
+            List<Bet> ganblerBets = ganblerDB.getBetList();     // PEGAR LISTA DO BANCO
+            ganblerBets.add(newBet);                            //ADICIONAR APOSTA (BET) NA LISTA
+            ganblerRepository.save(ganblerDB);
+            return newBet;
+        }
     }
 
+    public List<Bet> findAllBets(String email) {
+        Optional<Ganbler> ganblerOptional = ganblerRepository
+                .findGanblerByEmail(email);
 
-
+        return ganblerOptional.get().getBetList();
+    }
 }

@@ -1,7 +1,9 @@
 package com.postgrebets.postgrebet.controller;
 
+import com.postgrebets.postgrebet.model.Bet;
 import com.postgrebets.postgrebet.model.Ganbler;
 import com.postgrebets.postgrebet.service.GanblerService;
+import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +25,14 @@ public class GanblerController {
         return ganblerService.findAll();
     }
 
-    @PostMapping
-    public Ganbler newGanbler(@RequestBody Ganbler ganbler) {
+    @PostMapping("/ganbler")
+    public Bet newGanbler(@NotNull @RequestBody Ganbler ganbler) {
         return ganblerService.newGanbler(ganbler);
+    }
+
+    @GetMapping("/{email}")
+    public List<Bet> findAllBets(@NotNull @RequestParam String email){
+        return ganblerService.findAllBets(email);
     }
 
 }
