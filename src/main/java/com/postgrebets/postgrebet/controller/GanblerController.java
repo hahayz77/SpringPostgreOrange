@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -20,17 +21,17 @@ public class GanblerController {
         this.ganblerService = ganblerService;
     }
 
-    @GetMapping
+    @GetMapping("/")
     public List<Ganbler> getGanblers() {
         return ganblerService.findAll();
     }
 
-    @PostMapping("/ganbler")
-    public Bet newGanbler(@NotNull @RequestBody Ganbler ganbler) {
-        return ganblerService.newGanbler(ganbler);
+    @PostMapping("/ganble/{email}")
+    public Bet newBet(@NotNull @RequestBody Ganbler ganbler) {
+        return ganblerService.newBet(ganbler);
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("/bets/{email}")
     public List<Bet> findAllBets(@NotNull @RequestParam String email){
         return ganblerService.findAllBets(email);
     }

@@ -26,7 +26,7 @@ public class GanblerService {
         return ganblerRepository.findAll();
     }
 
-    public Bet newGanbler(Ganbler ganbler){
+    public Bet newBet(Ganbler ganbler){
 
         Optional<Ganbler> ganblerOptional = ganblerRepository
                 .findGanblerByEmail(ganbler.getEmail());
@@ -46,39 +46,44 @@ public class GanblerService {
             }
 
 
-            Bet newBet = new Bet(new Date(), randomResult[0], randomResult[1], randomResult[2]);   // NEW BET
+            Bet newBet = new Bet(randomResult[0], randomResult[1], randomResult[2], new Date());   // NEW BET
             betRepository.save(newBet);                         // SAVE BET
 
             if (ganblerDB.getBetList() == null){                // SE NÃO TEM APOSTA
                 ganblerDB.setBetList(new ArrayList<Bet>());     // LIST VAZIA CRIADA
             }
 
-            List<Bet> ganblerBets = ganblerDB.getBetList();     // PEGAR LISTA DO BANCO
-            ganblerBets.add(newBet);                            //ADICIONAR APOSTA (BET) NA LISTA
-            ganblerRepository.save(ganblerDB);
+            ganblerDB.getBetList().add(newBet);                 // PEGAR LISTA DO BANCO E ADICIONAR APOSTA
+            ganblerRepository.save(ganblerDB);                  // SALVAR NO REPOSITORIO
             return newBet;
 
         }
         else{                                                   //NÃO TEM EMAIL
-            ganblerRepository.save(ganbler);
-            Optional<Ganbler> findGanblerDB = ganblerRepository.findGanblerByEmail(ganbler.getEmail());
+            ganblerRepository.save(ganbler);                    // SALVAR NO REPOSITORIO
+            Optional<Ganbler> findGanblerDB = ganblerRepository
+                    .findGanblerByEmail(ganbler.getEmail());
             Ganbler ganblerDB = findGanblerDB.get();
 
-            // GERAR NUMEROS - 2
-            Random randomNumbers = new Random();
-            int[] randomResult = new int[3];
+            Bet testBet;
+            Bet newBet;
+            do {
+                // GERAR NUMEROS - 2
+                Random randomNumbers = new Random();
+                int[] randomResult = new int[3];
+                for (int i = 0; i <=2; i++){
+                    int num = randomNumbers.nextInt(99);
+                    randomResult[i] = num;
+                }
+                //TESTAR VALORES DA APOSTA
+                newBet = new Bet(randomResult[0], randomResult[1], randomResult[2], new Date());
+                testBet = betRepository.findThatBet(randomResult[0], randomResult[1], randomResult[2]);
 
-            for (int i = 0; i <=2; i++){
-                int num = randomNumbers.nextInt(99);
-                randomResult[i] = num;
-            }
+            }while (testBet != null);
 
-            Bet newBet = new Bet(new Date(), randomResult[0], randomResult[1], randomResult[2]);
             betRepository.save(newBet);
 
             ganblerDB.setBetList(new ArrayList<Bet>());         // LIST VAZIA CRIADA
-            List<Bet> ganblerBets = ganblerDB.getBetList();     // PEGAR LISTA DO BANCO
-            ganblerBets.add(newBet);                            //ADICIONAR APOSTA (BET) NA LISTA
+            ganblerDB.getBetList().add(newBet);                 // PEGAR LISTA DO BANCO E ADICIONAR APOSTA
             ganblerRepository.save(ganblerDB);
             return newBet;
         }

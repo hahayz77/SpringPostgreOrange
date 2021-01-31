@@ -1,5 +1,6 @@
 package com.postgrebets.postgrebet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ public class Ganbler {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
 
     @NotNull

@@ -1,27 +1,29 @@
 package com.postgrebets.postgrebet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity(name = "bets")
 public class Bet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
-
-    private Date date;
 
     private int n1;
     private int n2;
     private int n3;
 
-    public Bet(Date date, int n1, int n2, int n3) {
-        this.date = date;
+    private Date date;
+
+    public Bet(int n1, int n2, int n3, Date date) {
         this.n1 = n1;
         this.n2 = n2;
         this.n3 = n3;
+        this.date = date;
     }
 
     public Bet() {    }
